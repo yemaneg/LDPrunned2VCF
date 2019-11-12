@@ -1,4 +1,6 @@
-
+#input.vcf.fn (Please use a the vcf file with its path)
+#output.vcf.file(Please include the intended file name of the output vcf file.)
+#LD used is 0.2 by default. You can use other values for the parameter. 
 
 LDpruning2VCF<-function(input.vcf.fn,output.vcf,LD=0.2){
 
