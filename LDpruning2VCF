@@ -1,0 +1,52 @@
+
+
+LDpruning2VCF<-function(input.vcf.fn,output.vcf,LD=0.2){
+
+require(SNPRelate)
+require(SeqArray)
+
+library(SNPRelate)
+library(SeqArray)
+  
+#Input Files
+input.vcf.fn <- "C:/Users/Work/OneDrive - Kansas State University/research/PHD-SEMINAR/Raw Data Used/SMIL_FILLIN_5PCTHET_ORIG.vcf"
+output.vcf <- "prunned3.vcf"
+
+
+
+#SNP RELATE
+
+snpgdsVCF2GDS(input.vcf.fn, "temp.gds", method="biallelic.only")
+trial.geno<-snpgdsOpen("temp.gds")
+
+
+# SNP PRUNING BASED ON INPUT LD
+
+snpset <- snpgdsLDpruning(trial.geno, ld.threshold=LD)
+snp.id <- unlist(unname(snpset))
+snpgdsClose(trial.geno)
+
+# Filter based on the prunned snps
+
+snpgdsCreateGenoSet ("temp.gds", "prunned_gds", snp.id=snp.id, snpfirstdim=NULL, compress.geno="", verbose=TRUE)
+unlink("temp.gds")
+# open gds formt to seq format 
+
+
+
+
+# Convert snprelate to seqArraygdsformat
+
+seqSNP2GDS("prunned_gds","seqArray_prunned.gds")
+
+# open prunned seqArray gds formatted file
+seqgds <-seqOpen("seqArray_prunned.gds")
+
+# convert the seq array gds object to vcf formatted file.
+seqGDS2VCF(seqgds,output.vcf)
+
+seqClose(seqgds)
+unlink(c("seqArray_prunned.gds"))
+
+}
+
